@@ -102,89 +102,69 @@ $.getJSON("https://raw.githubusercontent.com/MaureenArg/datostarea/master/denunc
   
   // Registros denuncias individuales
   
-  var capa_denuncias = L.geoJson(geodata, {
-    style: function(feature) {
-	  return {'color': "#013220", 'weight': 3}
-    },
+	var capa_denuncias = L.geoJson(geodata, {
+		style: function(feature) {
+			return {'color': "#013220", 'weight': 3}
+	},
     onEachFeature: function(feature, layer) {
       var popupText = "<strong>CATEGORIA</strong>: " + feature.properties.CATEGORIA_ + "<br>" ;
       layer.bindPopup(popupText);
-    },
+		},
     pointToLayer: function(getJsonPoint, latlng) {
         return L.marker(latlng, {icon: iconoDen});
     }
-  });
+ });
+
+
 
  // Capa de puntos agrupados denuncias
   var capa_denuncias_agrupados = L.markerClusterGroup({spiderfyOnMaxZoom: true});
-	capa_denuncias_agrupados.addLayer(capa_denuncias);
+  capa_denuncias_agrupados.addLayer(capa_denuncias);
 
- // Se añaden las capas al mapa y al control de capas
-
-
+ 
 	capa_denuncias.addTo(mapa);
 	control_capas.addOverlay(capa_denuncias_agrupados, 'Registros agrupados de denuncias');
 	control_capas.addOverlay(capa_denuncias, 'Registros individuales de denuncias');
-	});	
+});	
 
 
+// Capa vectorial de registros agrupados de monocultivos
 
-	
-	// Capa vectorial de registros agrupados de piña
-$.getJSON("https://raw.githubusercontent.com/MaureenArg/datostarea/master/pina.geojson", function(geodata) {
+$.getJSON("https://raw.githubusercontent.com/MaureenArg/datostarea/master/pinia.geojson", function(geodata) {
   
-  // Registros piña  individuales
+  // Registros monocultivos individuales
   
-  var capa_pina = L.geoJson(geodata, {
-    style: function(feature) {
-	  return {'color': "#20603d", 'weight': 1}
-    },
-	
-	onEachFeature: function(feature, layer) {
-      var popupText = "<strong>CODIGO</strong>: " + feature.properties.cod_pina + "<br>" ;
-      layer.bindPopup(popupText);
-    },
-    
+	var capa_monocul = L.geoJson(geodata, {
+		style: function(feature) {
+			return {'color': "#013220", 'weight': 3}
+	},
+   
     pointToLayer: function(getJsonPoint, latlng) {
         return L.marker(latlng, {icon: iconoPin});
     }
-  });
+ });
 
-	
-// Capa de puntos agrupados pina
-  var capa_pina_agrupados = L.markerClusterGroup({spiderfyOnMaxZoom: true});
-	capa_pina_agrupados.addLayer(capa_pina);	
-	
+  // Capa de calor (heatmap) de monocultivos
+  coordenadas = geodata.features.map(feat => feat.geometry.coordinates.reverse());
+  var capa_monocul_calor = L.heatLayer(coordenadas, {radius: 40, blur: 2});
+
+
+// Capa de puntos agrupados de monocultivos
+  var capa_monocul_agrupados = L.markerClusterGroup({spiderfyOnMaxZoom: true});
+  capa_monocul_agrupados.addLayer(capa_monocul);
+
+
  
-  
-   // Se añaden las capas al mapa y al control de capas
-
-	
-	capa_pina.addTo(mapa);
-	control_capas.addOverlay(capa_pina_agrupados, 'Registros agrupados de cultivo de piña');
-	control_capas.addOverlay(capa_pina, 'Registros individuales de cultivo de piña');
-	});
-
-
-
-	
-// Capa de calor denuncias (heatmap)
-  coordenadas = geodata.features.map(feat => feat.geometry.coordinates.reverse());
-  var capa_denuncias_calor = L.heatLayer(coordenadas, {radius: 10, blur: 1});
-  
-
-	capa_denuncias_calor.addTo(mapa);
-	control_capas.addOverlay(capa_denuncias_calor, 'Mapa de calor');
-	
-	
-	
-// Capa de calor denuncias (heatmap)
-  coordenadas = geodata.features.map(feat => feat.geometry.coordinates.reverse());
-  var capa_denuncias_calor = L.heatLayer(coordenadas, {radius: 10, blur: 1});
-  
-
-	capa_denuncias_calor.addTo(mapa);
-	control_capas.addOverlay(capa_denuncias_calor, 'Mapa de calor');
+// Se añaden las capas al mapa y al control de capas
+  capa_monocul_calor.addTo(mapa);
+  control_capas.addOverlay(capa_monocul_calor, 'Mapa de calor de monocultivos');
+ 
+ 
+  // capa_monocul_agrupados.addTo(mapa);
+  control_capas.addOverlay(capa_monocul_agrupados, 'Registros agrupados de monocultivos');
+  // capa_monocul.addTo(mapa);
+  control_capas.addOverlay(capa_monocul, 'Registros individuales de monocultivos');
+});
 	
 	
 	
